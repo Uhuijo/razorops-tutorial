@@ -1,0 +1,44 @@
+apiVersion: batch/v1beta1
+kind: CronJob  # Tell kuber' that this is a cronjob
+metadata:
+  annotations:
+  generateName: ecr-token-   # Name of the job ,can be anything
+  namespace: default
+spec:
+  concurrencyPolicy: Allow
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:    # the conatiner that will be triggerd by cronjob
+          - image: odaniait/aws-kubectl:latest   # the base iamge to be used to run our shell script
+            imagePullPolicy: IfNotPresent  # as per your requirement | standard | read docs
+            name: ecr-cred-helper # as per your requirement | standard | read docs
+            command:    # our script goes here
+            - /bin/sh   # standard | set the entry point for execution after cron triggered
+            - -c        # standard
+            - |-        # actuall script starts + some stuff to execute pipe script when config is sent ot kuber'
+              ACCOUNT=[AWS_ACCOUNT_ID]      # custom script | your aws account id
+              REGION=[AWS_REGION]      # custom script | your aws account region of choice
+              SECRET_NAME=${REGION}-ecr-registry  # custom script | name of secret
+              EMAIL=[YOUR AWS ACCOUNT EMAIL ID]   # custom script | any email address
+              TOKEN=`aws ecr get-login --region ${REGION} --registry-ids ${ACCOUNT} | cut -d' ' -f6`   # custom script | this will call AWS ECr to gewt login password and store it in TOKEN
+              echo "ENV variables setup done."
+              kubectl delete secret --ignore-not-found $SECRET_NAME   # custom script | delte previous secret if any
+              kubectl create secret docker-registry $SECRET_NAME --docker-server=https://${ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com --docker-username=AWS --docker-password="${TOKEN}" --docker-email="${EMAIL}"
+              echo "Secret created by name. $SECRET_NAME"
+              echo "token is $TOKEN"
+              kubectl patch serviceaccount razorops -p '{"imagePullSecrets":[{"name":"'$SECRET_NAME'"}]}'   # custom script | update the deafult servciee account
+              echo "All done."
+            env:                     # container | envoirnment vars needed for aws config
+            - name: AWS_DEFAULT_REGION       # container | aws will auto detect this account region
+              value: [AWS_REGION]
+            - name: AWS_SECRET_ACCESS_KEY     # container | aws will auto detect this account secret key and use it
+              value: [AWS_SECRET_ACCESS_KEY]
+            - name: AWS_ACCESS_KEY_ID           # container | aws will auto detect this account id and use it
+              value: [AWS_ACCESS_KEY_ID]

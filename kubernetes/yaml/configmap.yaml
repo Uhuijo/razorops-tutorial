@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map
+data:
+  DATABASE_URL: "db-url"
+  RAILS_SERVE_STATIC_FILES: "1"
+  RAILS_LOG_TO_STDOUT: "true"
+  RAILS_ENV: "production"
+  RACK_ENV: "production"
+  DOMAIN_NAME: "www.yourdomain.com"
+  SECRET_KEY_BASE: "ksdkd098399823bs997833hsddsoi39009"
+  SMTP_USERNAME: "username"
+  SMTP_PASSWORD: "somepassword"
+  AWS_ACCESS_KEY_ID: "aws-acess-key"
+  AWS_REGION: "your-region"
+  AWS_SECRET_ACCESS_KEY: "secret-acess-key"
