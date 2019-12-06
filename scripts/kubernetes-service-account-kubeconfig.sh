@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# Usage ./k8s-service-account-kubeconfig.sh ( namespace ) ( service account name )
+# Usage ./kubernetes-service-account-kubeconfig.sh ( namespace ) ( service account name )
 
 TEMPDIR=$( mktemp -d )
 
@@ -34,5 +34,7 @@ kubectl config --kubeconfig=$KUBECONFIG \
 
 kubectl config --kubeconfig=$KUBECONFIG \
     use-context registry
+
+# It will change the current context.
 
 echo "kubeconfig written to file \"$KUBECONFIG\""
