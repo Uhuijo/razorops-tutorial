@@ -9,7 +9,7 @@ data:
   RAILS_ENV: "production"
   RACK_ENV: "production"
   DOMAIN_NAME: "www.yourdomain.com"
-  SECRET_KEY_BASE: "ksdkd098399823bs997833hsddsoi39009"
+  SECRET_KEY_BASE: "Your RAILS APP KEY SECRET"
   SMTP_USERNAME: "username"
   SMTP_PASSWORD: "somepassword"
   AWS_ACCESS_KEY_ID: "aws-acess-key"
