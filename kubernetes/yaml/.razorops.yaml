@@ -13,4 +13,4 @@ tasks:
 workflow:
   - name: production
     tasks: [deploy-k8s]
-    when: branch == "master"
+    when: branch == "main"
